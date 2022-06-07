@@ -1,0 +1,32 @@
+{
+  "name": "quick-toshihiko",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mapleincode/qucik-toshihiko.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mapleincode/qucik-toshihiko/issues"
+  },
+  "homepage": "https://github.com/mapleincode/qucik-toshihiko#readme",
+  "dependencies": {
+    "mysql2": "^2.3.3",
+    "toshihiko": "^1.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.17.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-standard": "^5.0.0"
+  }
+}

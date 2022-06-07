@@ -1,1 +1,1 @@
-# qucik-toshihiko
+# quick-toshihiko
