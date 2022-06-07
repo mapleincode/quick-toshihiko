@@ -2,8 +2,19 @@
  * @Author: maple
  * @Date: 2020-11-18 11:43:40
  * @LastEditors: maple
- * @LastEditTime: 2022-06-07 20:05:46
+ * @LastEditTime: 2022-06-07 20:21:21
  */
+const mysql = require('mysql2');
+mysql._createPool = mysql.createPool;
+mysql.createPool = function () {
+  const options = arguments[0];
+  const _options = {
+    ...options
+  };
+  delete _options.showSql;
+  arguments[0] = _options;
+  return mysql._createPool(...arguments);
+};
 const T = require('toshihiko');
 const fs = require('fs');
 const path = require('path');
@@ -24,6 +35,7 @@ module.exports = {
         const { name, dbType = 'mysql' } = dbConfig;
         delete dbConfig.name;
         delete dbConfig.dbType;
+        dbConfig.database = dbConfig.database || name;
         // init toshihiko
         const db = new T.Toshihiko(dbType, dbConfig);
 
