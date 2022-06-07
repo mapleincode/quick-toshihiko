@@ -2,7 +2,7 @@
  * @Author: maple
  * @Date: 2020-11-18 11:43:40
  * @LastEditors: maple
- * @LastEditTime: 2022-06-07 20:21:21
+ * @LastEditTime: 2022-06-07 20:22:49
  */
 const mysql = require('mysql2');
 mysql._createPool = mysql.createPool;
@@ -145,7 +145,7 @@ module.exports = {
       }
     },
     get: function (tableName) {
-      return DB_MAP[name] || null;
+      return DB_MAP[tableName] || null;
     }
   },
   TYPE: T.Type,
