@@ -18,6 +18,7 @@
   "homepage": "https://github.com/mapleincode/qucik-toshihiko#readme",
   "dependencies": {
     "mysql2": "^2.3.3",
+    "quick-toshihiko": "^0.0.1",
     "toshihiko": "^1.0.4"
   },
   "devDependencies": {
