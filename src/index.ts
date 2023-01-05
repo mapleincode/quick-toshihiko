@@ -4,7 +4,24 @@
  * @LastEditors: maple
  * @LastEditTime: 2022-06-08 11:56:56
  */
-const mysql = require('mysql2');
+import mysql2 from 'mysql2'
+import fs from 'node:fs'
+import path from 'node:path'
+import quickConfig from './quick_config'
+import T, { Type, Toshihiko } from 'toshihiko';
+import { ModelMapDefine, QToshihiko } from './type';
+import { 
+  DbConfig,
+  DbConfigMapDefine,
+  DBInitOptions,
+  DbMapDefine,
+  FieldsDefines,
+  QToshihiko,
+  QuickConfigOptions
+ } from './type';
+
+const mysql: any = mysql2
+
 mysql._createPool = mysql.createPool;
 mysql.createPool = function () {
   const options = arguments[0];
@@ -15,30 +32,34 @@ mysql.createPool = function () {
   arguments[0] = _options;
   return mysql._createPool(...arguments);
 };
-const T = require('toshihiko');
-const fs = require('fs');
-const path = require('path');
-const quickConfig = require('./quick_config');
 
-const MODLE_MAP = {};
-const DB_MAP = {};
-const DB_CONFIG_MAP = {};
 
-function initDB (dbName, initOptions) {
+
+const MODLE_MAP: ModelMapDefine = {};
+const DB_MAP: DbMapDefine = {};
+const DB_CONFIG_MAP: DbConfigMapDefine = {};
+
+
+
+
+
+
+function initDB (dbName: string, initOptions: DBInitOptions) {
   if (!DB_CONFIG_MAP[dbName]) {
     throw new Error(`db: ${dbName} not init!`);
   }
 
   const [dbType, dbConfig] = DB_CONFIG_MAP[dbName];
-  const db = DB_MAP[dbName] = new T.Toshihiko(dbType, dbConfig);
+  const db: QToshihiko = DB_MAP[dbName] = new Toshihiko(dbType, dbConfig);
+
 
   // add qdefine
-  db.qdefine = function (tableName, fields, options) {
+  db.qdefine = function (tableName: string, fields: FieldsDefines, options: QuickConfigOptions) {
     const _fileds = quickConfig(fields, options);
     const model = db.define(tableName, _fileds);
 
     if (initOptions.saveTableWithNoDB) {
-      if (!MODLE_MAP[tableName]) {
+      if (MODLE_MAP[tableName] === undefined) {
         // set model map
         MODLE_MAP[tableName] = model;
       } else {
@@ -125,27 +146,29 @@ function initModel (db, dbName, modelRoot, initOptions) {
   }
 }
 
+
+
 module.exports = {
   db: {
-    init: function (dbConfigs = [], modelRoot = '', initOptions = {}) {
+    init: function (_dbConfigs: DbConfig|DbConfig[], modelRoot: string, initOptions: DBInitOptions) {
       modelRoot = modelRoot || path.join(process.execPath, 'models');
-      if (!Array.isArray(dbConfigs)) {
-        dbConfigs = dbConfigs.concat(dbConfigs);
-      }
+
+      const dbConfigs: DbConfig[] = Array.isArray(_dbConfigs) ? _dbConfigs : [_dbConfigs];
 
       for (const dbConfig of dbConfigs) {
         const { name, dbType = 'mysql' } = dbConfig;
+
+        if (name === undefined) {
+          throw new Error('name 不能为空')
+        }
+
         delete dbConfig.name;
         delete dbConfig.dbType;
         dbConfig.database = dbConfig.database || name;
-        // init toshihiko
-        // const db =
-        // DB_MAP[name] = db;
-
         DB_CONFIG_MAP[name] = [dbType, dbConfig];
       }
 
-      if (modelRoot) {
+      if (modelRoot !== '') {
         const dbDirs = fs.readdirSync(modelRoot);
         for (const dbDir of dbDirs) {
           if (dbDir[0] === '.') {
@@ -166,7 +189,7 @@ module.exports = {
       return DB_MAP[tableName] || null;
     }
   },
-  TYPE: T.Type,
+  TYPE: Toshihiko.Type,
   model: {
     get: function (table) {
       const model = MODLE_MAP[table];

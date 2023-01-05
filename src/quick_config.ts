@@ -1,15 +1,22 @@
 
-const T = require('toshihiko');
+import Toshihiko, { Type, _Type } from 'toshihiko'
+import { FieldsDefines, QuickConfigOptions } from './type';
+
+interface StringMap {
+  [key: string]: string
+}
+
 
 const chars = 'abcdefghijklmnopgrstuvwxyz'.split('');
-const charMap = {};
-const lowerCharMap = {};
+const charMap: StringMap = {};
+const lowerCharMap: StringMap = {};
 for (const c of chars) {
   charMap[c.toUpperCase()] = c;
   lowerCharMap[c] = c;
 }
 
-function getLowerName (name = '') {
+
+function getLowerName (name: string) {
   let result = '';
   for (let i = 0; i < name.length; i++) {
     const c = name[i];
@@ -27,8 +34,26 @@ function getLowerName (name = '') {
   return result;
 }
 
-const quickConfig = function (items = [], options = {}) {
+
+
+
+interface ColumnConfig {
+  primaryKey?:boolean
+  allowNull?: boolean
+  column?: string
+  name?: string
+  type?: any
+  defaultValue?: string|boolean|number
+}
+
+type DefaultValueType = string|number|boolean|undefined
+
+const quickConfig = function (items: FieldsDefines, options: QuickConfigOptions|undefined) {
   const configs = [];
+
+  if (options === undefined) {
+    options = {}
+  }
 
   const { setPrimaryKey = true } = options;
 
@@ -39,7 +64,7 @@ const quickConfig = function (items = [], options = {}) {
       item = item.split(',').map(item => item.trim());
     }
 
-    const config = {};
+    const config: ColumnConfig = {};
 
     // 设置 primary key
     if (!primaryKeySet) {
@@ -49,7 +74,7 @@ const quickConfig = function (items = [], options = {}) {
     }
 
     // 全局 allowNull
-    if (options.allowNull) {
+    if (options.allowNull == true) {
       if (!config.primaryKey) {
         config.allowNull = true;
       }
@@ -74,18 +99,23 @@ const quickConfig = function (items = [], options = {}) {
       continue;
     }
 
-    let type = item.shift();
-    const TYPE = T.Type;
-    if (typeof type === 'string') {
-      if (type === 's') type = 'String';
-      if (type === 'i') type = 'Integer';
-      if (type === 'f') type = 'Float';
-      if (type === 'd') type = 'Datetime';
-      if (type === 'b') type = 'Boolean';
+    let type = item.shift() as string|any;
 
-      if (TYPE[type]) {
-        config.type = TYPE[type];
-      }
+    if (typeof type === 'string') {
+      let colType;
+
+      if (type === 's' || type === 'String'){
+        colType = Type.String
+      } else if (type === 'i' || type === 'Integer') {
+        colType = Type.Integer;
+      } else if (type === 'f'|| type === 'Float') {
+        colType = Type.Float;
+      } else if (type === 'd'|| type === 'Datetime') {
+        colType = Type.Datetime;
+      } else if (type === 'b'|| type === 'Boolean') {
+        colType = Type.Boolean;
+      };
+      config.type = colType
     } else if (type) {
       config.type = type;
     }
@@ -95,8 +125,8 @@ const quickConfig = function (items = [], options = {}) {
       continue;
     }
 
-    let allowNull = item.shift();
-    let defaultValue;
+    let allowNull = item.shift() as DefaultValueType;
+    let defaultValue: DefaultValueType;
 
     // 判定 Boolean 下 true 为默认值优先
     if (type === 'Boolean' && (
@@ -104,25 +134,22 @@ const quickConfig = function (items = [], options = {}) {
       allowNull === 'true' ||
       allowNull === 'false'
     )) {
-      allowNull = allowNull ? (allowNull !== 'false') : false;
-      config.defaultValue = defaultValue = allowNull;
+      const allowNullValue = allowNull ? (allowNull !== 'false') : false;
+      config.defaultValue = defaultValue = allowNullValue;
     } else {
       if (allowNull === '$t' || allowNull === 'true' || allowNull === true) {
         config.allowNull = allowNull = true;
-      } else if (allowNull === '$f' || allowNull === false || allowNull === false) {
+      } else if (allowNull === '$f' || allowNull === false) {
         config.allowNull = allowNull = false;
       } else {
-        config.defaultValue = defaultValue = allowNull;
+        if (allowNull !== undefined) {
+          config.defaultValue = defaultValue = allowNull;
+        }
       }
     }
 
-    // if (item.length === 0) {
-    //   configs.push(config);
-    //   continue;
-    // }
-
     if (defaultValue === undefined) {
-      defaultValue = item.shift();
+      defaultValue = item.shift() as DefaultValueType;
     }
 
     if (typeof defaultValue === 'object' && defaultValue !== null) {
@@ -131,9 +158,9 @@ const quickConfig = function (items = [], options = {}) {
       // 根据类型，对 defaultValue 做转换
 
       if (type === 'Integer') {
-        defaultValue = parseInt(defaultValue);
+        defaultValue = parseInt(defaultValue as string);
       } else if (type === 'Float') {
-        defaultValue = parseFloat(defaultValue);
+        defaultValue = parseFloat(defaultValue as string);
       } else if (type === 'Boolean') {
         defaultValue = allowNull ? (allowNull !== 'false') : false;
       }
@@ -156,4 +183,4 @@ const quickConfig = function (items = [], options = {}) {
   return configs;
 };
 
-module.exports = quickConfig;
+export default quickConfig;
