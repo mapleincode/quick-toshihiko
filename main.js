@@ -129,7 +129,9 @@ exports.db = {
             dbConfig.database = dbConfig.database || name;
             dbConfig.name = undefined;
             dbConfig.dbType = undefined;
-            const toshihikoDBConfig = Object.assign(Object.assign({}, dbConfig), { name: undefined, dbType: undefined });
+            const toshihikoDBConfig = Object.assign({}, dbConfig);
+            delete toshihikoDBConfig.name;
+            delete toshihikoDBConfig.dbType;
             DB_CONFIG_MAP[name] = [dbType, toshihikoDBConfig];
         }
         if (modelRoot) {
