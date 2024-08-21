@@ -127,6 +127,9 @@ exports.db = {
         for (const dbConfig of dbConfigs) {
             const { name, dbType = type_1.DBType.mysql } = dbConfig;
             dbConfig.database = dbConfig.database || name;
+            dbConfig.name = undefined;
+            dbConfig.dbType = undefined;
+            const db = Object.assign(Object.assign({}, dbConfig), { name: null, dbType: null });
             DB_CONFIG_MAP[name] = [dbType, dbConfig];
         }
         if (modelRoot) {
