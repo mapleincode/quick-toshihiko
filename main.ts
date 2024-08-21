@@ -159,10 +159,11 @@ export const db = {
         dbConfig.dbType = undefined;
 
         const toshihikoDBConfig: ToshihikoConfig = {
-          ...dbConfig,
-          name: undefined,
-          dbType: undefined
+          ...dbConfig
         }
+
+        delete toshihikoDBConfig.name;
+        delete toshihikoDBConfig.dbType;
 
         DB_CONFIG_MAP[name] = [dbType, toshihikoDBConfig];
       }
