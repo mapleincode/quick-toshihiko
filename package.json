@@ -1,10 +1,13 @@
 {
   "name": "quick-toshihiko",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "init": "tsc --init",
+    "dev": "tsc -w",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -17,17 +20,10 @@
   },
   "homepage": "https://github.com/mapleincode/qucik-toshihiko#readme",
   "dependencies": {
-    "mysql2": "^2.3.3",
-    "quick-toshihiko": "^0.0.1",
+    "mysql2": "3.9.4",
     "toshihiko": "^1.0.4"
   },
   "devDependencies": {
-    "eslint": "^8.17.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-n": "^15.2.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-standard": "^5.0.0"
+    "typescript": "^5.5.4"
   }
 }

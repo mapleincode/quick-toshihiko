@@ -18,7 +18,7 @@ mysql.createPool = function () {
 const T = require('toshihiko');
 const fs = require('fs');
 const path = require('path');
-const quickConfig = require('./quick_config');
+const quickConfig = require('../quick_config');
 
 const MODLE_MAP = {};
 const DB_MAP = {};
