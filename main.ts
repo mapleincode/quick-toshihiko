@@ -155,6 +155,15 @@ export const db = {
         const { name, dbType = DBType.mysql } = dbConfig;
 
         dbConfig.database = dbConfig.database || name;
+        dbConfig.name = undefined;
+        dbConfig.dbType = undefined;
+
+        const db: ToshihikoConfig = {
+          ...dbConfig,
+          name: null,
+          dbType: null
+        }
+
         DB_CONFIG_MAP[name] = [dbType, dbConfig as ToshihikoConfig];
       }
 

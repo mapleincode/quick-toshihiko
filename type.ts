@@ -16,6 +16,8 @@ export enum DBType {
 
 export type ToshihikoConfig = ConnectionOptions & {
   showSql?: boolean
+  name?: any
+  dbType?: any
 }
 
 export interface  DBConfigMapProps {
