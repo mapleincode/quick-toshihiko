@@ -158,13 +158,13 @@ export const db = {
         dbConfig.name = undefined;
         dbConfig.dbType = undefined;
 
-        const db: ToshihikoConfig = {
+        const toshihikoDBConfig: ToshihikoConfig = {
           ...dbConfig,
-          name: null,
-          dbType: null
+          name: undefined,
+          dbType: undefined
         }
 
-        DB_CONFIG_MAP[name] = [dbType, dbConfig as ToshihikoConfig];
+        DB_CONFIG_MAP[name] = [dbType, toshihikoDBConfig];
       }
 
       if (modelRoot) {

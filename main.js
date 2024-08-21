@@ -129,8 +129,8 @@ exports.db = {
             dbConfig.database = dbConfig.database || name;
             dbConfig.name = undefined;
             dbConfig.dbType = undefined;
-            const db = Object.assign(Object.assign({}, dbConfig), { name: null, dbType: null });
-            DB_CONFIG_MAP[name] = [dbType, dbConfig];
+            const toshihikoDBConfig = Object.assign(Object.assign({}, dbConfig), { name: undefined, dbType: undefined });
+            DB_CONFIG_MAP[name] = [dbType, toshihikoDBConfig];
         }
         if (modelRoot) {
             const dbDirs = (0, fs_1.readdirSync)(modelRoot);
