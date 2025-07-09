@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.model = exports.TYPE = exports.db = void 0;
+exports.TYPE = void 0;
 const toshihiko_1 = require("toshihiko");
 const QuickDB_1 = require("./QuickDB");
 const path_1 = require("path");
@@ -46,7 +46,7 @@ function initQuickModel(db, dbConfigFilePath, initOptions) {
     // fetch table configs
     for (const file of dirs) {
         // 判断是否隐藏文件
-        if (file.startsWith('.')) {
+        if (file.startsWith(".")) {
             continue;
         }
         const fileFullPath = (0, path_1.join)(dbConfigFilePath, file);
@@ -54,7 +54,7 @@ function initQuickModel(db, dbConfigFilePath, initOptions) {
         // 判断是否为文件
         if (fileState && fileState.isFile()) {
             // 处理 js 文件
-            if (file.endsWith('.js')) {
+            if (file.endsWith(".js")) {
                 const config = require((0, path_1.join)(dbConfigFilePath, file));
                 tableConfigs.push(config);
                 continue;
@@ -69,7 +69,7 @@ function initQuickModel(db, dbConfigFilePath, initOptions) {
             if (file.startsWith(".")) {
                 continue;
             }
-            if (file.indexOf('.js') > -1) {
+            if (file.indexOf(".js") > -1) {
                 const config = require((0, path_1.join)(subRoot, file));
                 tableConfigs.push(config);
             }
@@ -80,71 +80,79 @@ function initQuickModel(db, dbConfigFilePath, initOptions) {
         db.defineByModelFile(config);
     }
 }
-exports.db = {
-    init: function (dbConfigs, modelRoot = '', initOptions = {}) {
-        modelRoot = modelRoot || (0, path_1.join)(process.execPath, 'models');
-        if (!Array.isArray(dbConfigs)) {
-            dbConfigs = [dbConfigs];
-        }
-        const databaseMap = (0, QuickDB_1.buildQuickDBMap)(dbConfigs, initOptions);
-        if (modelRoot && modelRoot.trim() !== "") {
-            const databaseDirs = fs.readdirSync(modelRoot);
-            for (const databaseName of databaseDirs) {
-                if (databaseName.startsWith('.')) {
-                    // 过滤隐藏文件
-                    continue;
-                }
-                const dbConfigFilePath = (0, path_1.join)(modelRoot, databaseName);
-                const state = fs.statSync(dbConfigFilePath);
-                if (!state.isDirectory()) {
-                    continue;
-                }
-                const database = databaseMap[databaseName];
-                if (!database) {
-                    throw new Error(`init model error.db: ${databaseName} not found`);
-                }
-                // init model
-                initQuickModel(database, dbConfigFilePath, initOptions);
-            }
-        }
-        // 挂载 DB_MAP
-        DB_MAP = databaseMap;
-        // 挂载 MODEL_MAP
-        for (const key of Object.keys(databaseMap)) {
-            const db = databaseMap[key];
-            for (const model of db.getModels()) {
-                const dbName = db.getName();
-                const modelName = model.getName();
-                if (initOptions.saveTableWithNoDB) {
-                    // 老模式
-                    const testModel = MODEL_MAP[modelName];
-                    if (testModel) {
-                        // 存在同名 model
-                        throw new Error(`model ${modelName} has been already registered!`);
-                    }
-                    // 按照 model name 进行保存
-                    MODEL_MAP[modelName] = model;
-                }
-                MODEL_MAP[`${dbName}.${modelName}`] = model;
-            }
-        }
-    },
-    get: function (tableName) {
-        return DB_MAP[tableName] || null;
-    }
-};
+function getDB(tableName) {
+    return DB_MAP[tableName] || null;
+}
 exports.TYPE = toshihiko_1.Type;
 // @ts-ignore
-exports.model = {
-    get: function (collectionName, dbName) {
-        return this.getQuickModel(collectionName, dbName).get();
-    },
-    getQuickModel: function (collectionName, dbName) {
-        const key = dbName ? `${dbName}.${collectionName}` : collectionName;
-        const model = MODEL_MAP[key];
-        if (!model) {
-            throw new Error(`model: ${key} 不存在`);
-        }
-        return model;
+function initDBs(dbConfigs, modelRoot = "", initOptions = {}) {
+    modelRoot = modelRoot || (0, path_1.join)(process.execPath, "models");
+    if (!Array.isArray(dbConfigs)) {
+        dbConfigs = [dbConfigs];
     }
+    const databaseMap = (0, QuickDB_1.buildQuickDBMap)(dbConfigs, initOptions);
+    if (modelRoot && modelRoot.trim() !== "") {
+        const databaseDirs = fs.readdirSync(modelRoot);
+        for (const databaseName of databaseDirs) {
+            if (databaseName.startsWith(".")) {
+                // 过滤隐藏文件
+                continue;
+            }
+            const dbConfigFilePath = (0, path_1.join)(modelRoot, databaseName);
+            const state = fs.statSync(dbConfigFilePath);
+            if (!state.isDirectory()) {
+                continue;
+            }
+            const database = databaseMap[databaseName];
+            if (!database) {
+                throw new Error(`init model error.db: ${databaseName} not found`);
+            }
+            // init model
+            initQuickModel(database, dbConfigFilePath, initOptions);
+        }
+    }
+    // 挂载 DB_MAP
+    DB_MAP = databaseMap;
+    // 挂载 MODEL_MAP
+    for (const key of Object.keys(databaseMap)) {
+        const db = databaseMap[key];
+        for (const model of db.getModels()) {
+            const dbName = db.getName();
+            const modelName = model.getName();
+            if (initOptions.saveTableWithNoDB) {
+                // 老模式
+                const testModel = MODEL_MAP[modelName];
+                if (testModel) {
+                    // 存在同名 model
+                    throw new Error(`model ${modelName} has been already registered!`);
+                }
+                // 按照 model name 进行保存
+                MODEL_MAP[modelName] = model;
+            }
+            MODEL_MAP[`${dbName}.${modelName}`] = model;
+        }
+    }
+}
+function getModel(collectionName, dbName) {
+    return getQuickModel(collectionName, dbName).get();
+}
+function getQuickModel(collectionName, dbName) {
+    const key = dbName ? `${dbName}.${collectionName}` : collectionName;
+    const model = MODEL_MAP[key];
+    if (!model) {
+        throw new Error(`model: ${key} 不存在`);
+    }
+    return model;
+}
+exports.default = {
+    model: {
+        init: initDBs,
+        get: getDB
+    },
+    db: {
+        get: getModel
+    },
+    getDB: getDB,
+    getModel: getModel,
+    getQuickModel: getQuickModel
 };
