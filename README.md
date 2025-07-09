@@ -2,6 +2,6 @@
 
 ## Usage
 
-```javascript
+```bash
 cnpm install quick-toshihiko --save
 ```
