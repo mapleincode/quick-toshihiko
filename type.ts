@@ -1,5 +1,4 @@
 import { BaseType, Model, ObjStatic, Toshihiko, Type } from "toshihiko";
-import { ToshihikoQ } from "./index";
 import {ConnectionOptions} from "mysql2"
 import { QuickDB } from "./QuickDB";
 import { QuickModel } from "./QuickModel";

@@ -60,7 +60,7 @@ function initQuickModel(db: QuickDB, dbConfigFilePath: string, initOptions: Init
 }
 
 
-function getDB(tableName: string): QuickDB {
+export function getDB(tableName: string): QuickDB {
   return DB_MAP[tableName] || null;
 }
 
@@ -69,7 +69,7 @@ export const TYPE = Type;
 // @ts-ignore
 
 
-function initDBs(dbConfigs: DBConfigBaseProps[] | DBConfigBaseProps, modelRoot: string = "", initOptions: InitOptionsProps = {}) {
+export function initDBs(dbConfigs: DBConfigBaseProps[] | DBConfigBaseProps, modelRoot: string = "", initOptions: InitOptionsProps = {}) {
   modelRoot = modelRoot || join(process.execPath, "models");
   if (!Array.isArray(dbConfigs)) {
     dbConfigs = [dbConfigs];
@@ -130,11 +130,11 @@ function initDBs(dbConfigs: DBConfigBaseProps[] | DBConfigBaseProps, modelRoot: 
 
 }
 
-function getModel(collectionName: string, dbName?: string): Model {
+export function getModel(collectionName: string, dbName?: string): Model {
   return getQuickModel(collectionName, dbName).get();
 }
 
-function getQuickModel(collectionName: string, dbName?: string): QuickModel {
+export function getQuickModel(collectionName: string, dbName?: string): QuickModel {
   const key = dbName ? `${dbName}.${collectionName}` : collectionName;
 
   const model = MODEL_MAP[key];
@@ -144,15 +144,17 @@ function getQuickModel(collectionName: string, dbName?: string): QuickModel {
   return model;
 }
 
-export default {
-  model: {
-    init: initDBs,
-    get: getDB
-  },
-  db: {
-    get: getModel
-  },
-  getDB: getDB,
-  getModel: getModel,
-  getQuickModel: getQuickModel
+export const model = {
+  get: getDB
 };
+
+
+export const db = {
+  init: initDBs,
+  get: getModel
+
+};
+
+// export const getDB = getDB;
+// export const getModel = getModel;
+// export const getQuickModel = getQuickModel

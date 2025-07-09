@@ -33,7 +33,11 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TYPE = void 0;
+exports.db = exports.model = exports.TYPE = void 0;
+exports.getDB = getDB;
+exports.initDBs = initDBs;
+exports.getModel = getModel;
+exports.getQuickModel = getQuickModel;
 const toshihiko_1 = require("toshihiko");
 const QuickDB_1 = require("./QuickDB");
 const path_1 = require("path");
@@ -144,15 +148,13 @@ function getQuickModel(collectionName, dbName) {
     }
     return model;
 }
-exports.default = {
-    model: {
-        init: initDBs,
-        get: getDB
-    },
-    db: {
-        get: getModel
-    },
-    getDB: getDB,
-    getModel: getModel,
-    getQuickModel: getQuickModel
+exports.model = {
+    get: getDB
 };
+exports.db = {
+    init: initDBs,
+    get: getModel
+};
+// export const getDB = getDB;
+// export const getModel = getModel;
+// export const getQuickModel = getQuickModel
