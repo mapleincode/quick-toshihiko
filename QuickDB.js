@@ -11,7 +11,13 @@ class QuickDB {
         this.modelList = [];
         this.modelMap = {};
         this.dbConfig = dbConfig;
-        const { name, dbType = type_1.DBType.mysql } = dbConfig;
+        let { name, dbType = type_1.DBType.mysql } = dbConfig;
+        if (!dbConfig.database) {
+            dbConfig.database = 'mysql';
+        }
+        if (!name || !name.trim()) {
+            name = dbConfig.database.trim();
+        }
         delete dbConfig.name;
         delete dbConfig.dbType;
         this.name = name;
