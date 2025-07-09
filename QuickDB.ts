@@ -22,7 +22,15 @@ export class QuickDB {
 
   constructor(dbConfig: DBConfigBaseProps, initOptions: InitOptionsProps) {
     this.dbConfig = dbConfig;
-    const { name, dbType = DBType.mysql } = dbConfig;
+    let { name, dbType = DBType.mysql } = dbConfig;
+
+    if (!dbConfig.database) {
+      dbConfig.database = 'mysql';
+    }
+
+    if (!name || !name.trim()) {
+      name = dbConfig.database.trim();
+    }
 
     delete dbConfig.name;
     delete dbConfig.dbType;
