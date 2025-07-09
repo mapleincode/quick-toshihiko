@@ -106,7 +106,7 @@ export const db = {
             // 老模式
 
             const testModel = MODEL_MAP[modelName];
-            if (model) {
+            if (testModel) {
               // 存在同名 model
               throw new Error(`model ${modelName} has been already registered!`);
             }
