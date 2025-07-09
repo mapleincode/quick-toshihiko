@@ -70,7 +70,6 @@ export const TYPE = Type;
 
 
 export function initDBs(dbConfigs: DBConfigBaseProps[] | DBConfigBaseProps, modelRoot: string = "", initOptions: InitOptionsProps = {}) {
-  modelRoot = modelRoot || join(process.execPath, "models");
   if (!Array.isArray(dbConfigs)) {
     dbConfigs = [dbConfigs];
   }

@@ -8,7 +8,7 @@ import {
   InitOptionsProps,
   QuickDefineOptions,
   ModelFile,
-  ToshihikoSchema
+  ToshihikoSchema, QuickConfigOptions
 } from "./type";
 
 export class QuickDB {
@@ -37,19 +37,8 @@ export class QuickDB {
     return this.name;
   }
 
-  quickDefine(tableName: string, fields: string[], options: QuickDefineOptions) {
+  quickDefine(tableName: string, fields: string[], options: QuickConfigOptions = {}) {
     const schemas = quickConfig(fields, options);
-    // if (this.initOptions.saveTableWithNoDB) {
-    //   if (!MODEL_MAP[tableName]) {
-    //     // set model map
-    //     MODEL_MAP[tableName] = model;
-    //   } else {
-    //     // throw error;
-    //     throw new Error(`model ${tableName} has been already registered!`);
-    //   }
-    // }
-    //
-    // MODEL_MAP[`${db.database}.${tableName}`] = model;
     return this.define(tableName, schemas, options);
   }
 

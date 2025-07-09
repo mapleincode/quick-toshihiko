@@ -22,19 +22,8 @@ class QuickDB {
     getName() {
         return this.name;
     }
-    quickDefine(tableName, fields, options) {
+    quickDefine(tableName, fields, options = {}) {
         const schemas = (0, quick_config_1.quickConfig)(fields, options);
-        // if (this.initOptions.saveTableWithNoDB) {
-        //   if (!MODEL_MAP[tableName]) {
-        //     // set model map
-        //     MODEL_MAP[tableName] = model;
-        //   } else {
-        //     // throw error;
-        //     throw new Error(`model ${tableName} has been already registered!`);
-        //   }
-        // }
-        //
-        // MODEL_MAP[`${db.database}.${tableName}`] = model;
         return this.define(tableName, schemas, options);
     }
     defineByModelFile(config) {

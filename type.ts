@@ -50,7 +50,7 @@ export type QuickConfigItem = string | (object | boolean | string | [string, str
 
 export interface QuickConfigOptions {
   setPrimaryKey?: boolean
-  allowNull?: boolean
+  allowNullGlobal?: boolean
 }
 
 export interface ToshihikoSchema {

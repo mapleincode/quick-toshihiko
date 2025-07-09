@@ -27,21 +27,21 @@ function getLowerName(name = '') {
 }
 const quickConfig = function (items = [], options) {
     const configs = [];
-    const { setPrimaryKey = true } = options;
-    let primaryKeySet = !setPrimaryKey;
+    const { setPrimaryKey = true, allowNullGlobal } = options;
+    let primaryKeySetStatus = !setPrimaryKey;
     for (let item of items) {
         if (typeof item === 'string') {
             item = item.split(',').map(item => item.trim());
         }
         const config = {};
         // 设置 primary key
-        if (!primaryKeySet) {
+        if (!primaryKeySetStatus) {
             config.primaryKey = true;
-            config.allowNull = true;
-            primaryKeySet = true;
+            config.allowNull = false;
+            primaryKeySetStatus = true;
         }
         // 全局 allowNull
-        if (options.allowNull) {
+        if (options.allowNullGlobal) {
             if (!config.primaryKey) {
                 config.allowNull = true;
             }

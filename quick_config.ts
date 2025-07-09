@@ -39,9 +39,9 @@ function getLowerName (name = '') {
 export const quickConfig = function (items: QuickConfigItem[] = [], options: QuickConfigOptions): ToshihikoSchema[] {
   const configs: ToshihikoSchema[] = [];
 
-  const { setPrimaryKey = true } = options;
+  const { setPrimaryKey = true, allowNullGlobal } = options;
 
-  let primaryKeySet = !setPrimaryKey;
+  let primaryKeySetStatus = !setPrimaryKey;
 
   for (let item of items) {
     if (typeof item === 'string') {
@@ -51,14 +51,14 @@ export const quickConfig = function (items: QuickConfigItem[] = [], options: Qui
     const config: ToshihikoSchema = {};
 
     // 设置 primary key
-    if (!primaryKeySet) {
+    if (!primaryKeySetStatus) {
       config.primaryKey = true;
-      config.allowNull = true;
-      primaryKeySet = true;
+      config.allowNull = false;
+      primaryKeySetStatus = true;
     }
 
     // 全局 allowNull
-    if (options.allowNull) {
+    if (options.allowNullGlobal) {
       if (!config.primaryKey) {
         config.allowNull = true;
       }

@@ -90,7 +90,6 @@ function getDB(tableName) {
 exports.TYPE = toshihiko_1.Type;
 // @ts-ignore
 function initDBs(dbConfigs, modelRoot = "", initOptions = {}) {
-    modelRoot = modelRoot || (0, path_1.join)(process.execPath, "models");
     if (!Array.isArray(dbConfigs)) {
         dbConfigs = [dbConfigs];
     }
