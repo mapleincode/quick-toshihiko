@@ -1,6 +1,6 @@
 {
   "name": "quick-toshihiko",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -24,6 +24,7 @@
     "toshihiko": "^1.0.4"
   },
   "devDependencies": {
+    "@types/node": "^24.0.12",
     "typescript": "^5.5.4"
   }
 }

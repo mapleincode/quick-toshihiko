@@ -1,74 +1,72 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.model = exports.TYPE = exports.db = void 0;
 const toshihiko_1 = require("toshihiko");
-const quick_config_1 = require("./quick_config");
-const type_1 = require("./type");
+const QuickDB_1 = require("./QuickDB");
 const path_1 = require("path");
-const fs_1 = require("fs");
-// mysql._createPool = mysql.createPool;
-// mysql.createPool = function () {
-//   const options = arguments[0];
-//   const _options = {
-//     ...options
-//   };
-//   delete _options.showSql;
-//   arguments[0] = _options;
-//   return mysql._createPool(...arguments);
-// };
-// const T = require('toshihiko');
-// const fs = require('fs');
-// const path = require('path');
-// const quickConfig = require('./quick_config');
+const fs = __importStar(require("fs"));
 const MODEL_MAP = {};
-const DB_MAP = {};
-const DB_CONFIG_MAP = {};
-// add qdefine
-function initQuickToshihiko(dbName, initOptions) {
-    if (!DB_CONFIG_MAP[dbName]) {
-        throw new Error(`db: ${dbName} not init!`);
-    }
-    const [dbType, dbConfig] = DB_CONFIG_MAP[dbName];
-    const db = DB_MAP[dbName] = new toshihiko_1.Toshihiko(dbType, dbConfig);
-    const quickDefine = function (tableName, fields, options) {
-        const schemas = (0, quick_config_1.quickConfig)(fields, options);
-        const model = db.define(tableName, schemas);
-        if (initOptions.saveTableWithNoDB) {
-            if (!MODEL_MAP[tableName]) {
-                // set model map
-                MODEL_MAP[tableName] = model;
-            }
-            else {
-                // throw error;
-                throw new Error(`model ${tableName} has been already registered!`);
-            }
-        }
-        MODEL_MAP[`${db.database}.${tableName}`] = model;
-        return model;
-    };
-    const qdb = db;
-    qdb.quickDefine = quickDefine;
-    qdb.qdefine = quickDefine;
-    return qdb;
-}
-const initQuickModel = function (db, dbName, modelRoot, initOptions) {
+let DB_MAP = {};
+function initQuickModel(db, dbConfigFilePath, initOptions) {
     const tableConfigs = [];
-    const dbDirPath = (0, path_1.join)(modelRoot, dbName);
-    const dirs = (0, fs_1.readdirSync)(dbDirPath);
+    const dirs = fs.readdirSync(dbConfigFilePath);
     // fetch table configs
     for (const file of dirs) {
-        if (file[0] === '.')
-            continue;
-        // 处理 js 文件
-        if (file.endsWith('.js')) {
-            const config = require((0, path_1.join)(dbDirPath, file));
-            tableConfigs.push(config);
+        // 判断是否隐藏文件
+        if (file.startsWith('.')) {
             continue;
         }
-        const subRoot = (0, path_1.join)(dbDirPath, file);
-        const subDirs = (0, fs_1.readdirSync)(subRoot);
+        const fileFullPath = (0, path_1.join)(dbConfigFilePath, file);
+        const fileState = fs.statSync(fileFullPath);
+        // 判断是否为文件
+        if (fileState && fileState.isFile()) {
+            // 处理 js 文件
+            if (file.endsWith('.js')) {
+                const config = require((0, path_1.join)(dbConfigFilePath, file));
+                tableConfigs.push(config);
+                continue;
+            }
+            else {
+                continue;
+            }
+        }
+        const subRoot = (0, path_1.join)(dbConfigFilePath, file);
+        const subDirs = fs.readdirSync(subRoot);
         for (const file of subDirs) {
-            if (file[0] === '.') {
+            if (file.startsWith(".")) {
                 continue;
             }
             if (file.indexOf('.js') > -1) {
@@ -79,72 +77,55 @@ const initQuickModel = function (db, dbName, modelRoot, initOptions) {
     }
     // init model
     for (const config of tableConfigs) {
-        if (!config.config) {
-            continue;
-        }
-        let [tableName, fields, options = {}] = config.config;
-        const field = fields[0];
-        let schemas;
-        if (typeof field !== 'object' || Array.isArray(field)) {
-            schemas = (0, quick_config_1.quickConfig)(fields, options);
-        }
-        else {
-            schemas = fields;
-        }
-        const model = db.define(tableName, schemas);
-        if (MODEL_MAP[tableName]) {
-            throw new Error(`table: ${tableName} already registered!`);
-        }
-        // set model map
-        if (initOptions.saveTableWithNoDB) {
-            if (!MODEL_MAP[tableName]) {
-                // set model map
-                MODEL_MAP[tableName] = model;
-            }
-            else {
-                // throw error;
-                throw new Error(`model ${tableName} has been already registed!`);
-            }
-        }
-        MODEL_MAP[`${dbName}.${tableName}`] = model;
-        // bind function
-        const keys = Object.keys(config).filter(key => key !== 'config');
-        for (const key of keys) {
-            if (typeof config[key] === 'function') {
-                model[key] = config[key].bind(model);
-                continue;
-            }
-            model[key] = config[key];
-        }
+        db.defineByModelFile(config);
     }
-};
+}
 exports.db = {
-    init: function (dbConfigs = [], modelRoot = '', initOptions = {}) {
+    init: function (dbConfigs, modelRoot = '', initOptions = {}) {
         modelRoot = modelRoot || (0, path_1.join)(process.execPath, 'models');
         if (!Array.isArray(dbConfigs)) {
-            dbConfigs = [].concat(dbConfigs);
+            dbConfigs = [dbConfigs];
         }
-        for (const dbConfig of dbConfigs) {
-            const { name, dbType = type_1.DBType.mysql } = dbConfig;
-            dbConfig.database = dbConfig.database || name;
-            dbConfig.name = undefined;
-            dbConfig.dbType = undefined;
-            const toshihikoDBConfig = Object.assign({}, dbConfig);
-            delete toshihikoDBConfig.name;
-            delete toshihikoDBConfig.dbType;
-            DB_CONFIG_MAP[name] = [dbType, toshihikoDBConfig];
-        }
-        if (modelRoot) {
-            const dbDirs = (0, fs_1.readdirSync)(modelRoot);
-            for (const dbDir of dbDirs) {
-                if (dbDir[0] === '.') {
+        const databaseMap = (0, QuickDB_1.buildQuickDBMap)(dbConfigs, initOptions);
+        if (modelRoot && modelRoot.trim() !== "") {
+            const databaseDirs = fs.readdirSync(modelRoot);
+            for (const databaseName of databaseDirs) {
+                if (databaseName.startsWith('.')) {
+                    // 过滤隐藏文件
                     continue;
                 }
-                const dbName = dbDir;
-                // init db
-                const db = initQuickToshihiko(dbName, initOptions);
+                const dbConfigFilePath = (0, path_1.join)(modelRoot, databaseName);
+                const state = fs.statSync(dbConfigFilePath);
+                if (!state.isDirectory()) {
+                    continue;
+                }
+                const database = databaseMap[databaseName];
+                if (!database) {
+                    throw new Error(`init model error.db: ${databaseName} not found`);
+                }
                 // init model
-                initQuickModel(db, dbName, modelRoot, initOptions);
+                initQuickModel(database, dbConfigFilePath, initOptions);
+            }
+        }
+        // 挂载 DB_MAP
+        DB_MAP = databaseMap;
+        // 挂载 MODEL_MAP
+        for (const key of Object.keys(databaseMap)) {
+            const db = databaseMap[key];
+            for (const model of db.getModels()) {
+                const dbName = db.getName();
+                const modelName = model.getName();
+                if (initOptions.saveTableWithNoDB) {
+                    // 老模式
+                    const testModel = MODEL_MAP[modelName];
+                    if (model) {
+                        // 存在同名 model
+                        throw new Error(`model ${modelName} has been already registered!`);
+                    }
+                    // 按照 model name 进行保存
+                    MODEL_MAP[modelName] = model;
+                }
+                MODEL_MAP[`${dbName}.${modelName}`] = model;
             }
         }
     },
@@ -153,11 +134,16 @@ exports.db = {
     }
 };
 exports.TYPE = toshihiko_1.Type;
+// @ts-ignore
 exports.model = {
-    get: function (table) {
-        const model = MODEL_MAP[table];
+    get: function (collectionName, dbName) {
+        return this.getQuickModel(collectionName, dbName).get();
+    },
+    getQuickModel: function (collectionName, dbName) {
+        const key = dbName ? `${dbName}.${collectionName}` : collectionName;
+        const model = MODEL_MAP[key];
         if (!model) {
-            throw new Error(`model: ${table} 不存在`);
+            throw new Error(`model: ${key} 不存在`);
         }
         return model;
     }

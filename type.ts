@@ -1,13 +1,15 @@
 import { BaseType, Model, ObjStatic, Toshihiko, Type } from "toshihiko";
 import { ToshihikoQ } from "./index";
 import {ConnectionOptions} from "mysql2"
+import { QuickDB } from "./QuickDB";
+import { QuickModel } from "./QuickModel";
 
-export interface ModelMapProps {
-  [key: string]: Model
+export interface QuickModelMap {
+  [key: string]: QuickModel
 }
 
-export interface DBMapProps {
-  [key: string]: Toshihiko
+export interface QuickDBMap {
+  [key: string]: QuickDB
 }
 
 export enum DBType {
@@ -37,9 +39,9 @@ export interface InitOptionsProps {
   saveTableWithNoDB?: boolean
 }
 
-export interface InitQuickModel {
-  (db: QuickToshihiko, dbName: string, modelRoot: string, initOptions: InitOptionsProps): void
-}
+// export interface InitQuickModel {
+//   (db: QuickToshihiko, dbName: string, modelRoot: string, initOptions: InitOptionsProps): void
+// }
 
 export type QuickConfigItem = string | (object | boolean | string | [string, string])[]
 
@@ -81,3 +83,5 @@ export type DBConfigBaseProps = ToshihikoConfig & {
   name: string
   dbType: DBType
 }
+
+export type DBConfigMapType = {[key:string]:[DBType, ToshihikoConfig]};
