@@ -1,6 +1,6 @@
 {
   "name": "quick-toshihiko",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/mapleincode/qucik-toshihiko#readme",
   "dependencies": {
-    "mysql2": "3.9.4",
+    "mysql2": "^3.14.1",
     "toshihiko": "^1.0.4"
   },
   "devDependencies": {

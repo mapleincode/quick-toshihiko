@@ -93,6 +93,17 @@ function initDBs(dbConfigs, modelRoot = "", initOptions = {}) {
     if (!Array.isArray(dbConfigs)) {
         dbConfigs = [dbConfigs];
     }
+    for (const dbConfig of dbConfigs) {
+        if (!dbConfig.database && dbConfig.name) {
+            dbConfig.database = dbConfig.name;
+        }
+        if (!dbConfig.database) {
+            throw new Error("db database not set");
+        }
+        if (!dbConfig.dbType) {
+            dbConfig.dbType = "mysql";
+        }
+    }
     const databaseMap = (0, QuickDB_1.buildQuickDBMap)(dbConfigs, initOptions);
     if (modelRoot && modelRoot.trim() !== "") {
         const databaseDirs = fs.readdirSync(modelRoot);
