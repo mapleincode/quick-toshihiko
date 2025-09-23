@@ -158,7 +158,7 @@ export function getQuickModel(collectionName: string, dbName?: string): QuickMod
 }
 
 export const model = {
-  get: getDB
+  get: getModel
 };
 
 

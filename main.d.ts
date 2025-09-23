@@ -8,7 +8,7 @@ export declare function initDBs(dbConfigs: DBConfigBaseProps[] | DBConfigBasePro
 export declare function getModel(collectionName: string, dbName?: string): Model;
 export declare function getQuickModel(collectionName: string, dbName?: string): QuickModel;
 export declare const model: {
-    get: typeof getDB;
+    get: typeof getModel;
 };
 export declare const db: {
     init: typeof initDBs;

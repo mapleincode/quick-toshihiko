@@ -159,7 +159,7 @@ function getQuickModel(collectionName, dbName) {
     return model;
 }
 exports.model = {
-    get: getDB
+    get: getModel
 };
 exports.db = {
     init: initDBs,
