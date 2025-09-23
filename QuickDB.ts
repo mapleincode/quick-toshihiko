@@ -94,7 +94,11 @@ export class QuickDB {
     this.modelMap[quickModel.getName()] = quickModel;
   }
 
-  get(collectionName: string): QuickModel {
+  get(collectionName: string): Model {
+    return this.getQuickModel(collectionName).get();
+  }
+
+  getQuickModel(collectionName: string): QuickModel {
     const model = this.modelMap[collectionName];
     if (!model) {
       throw new Error(`db: ${this.getName()} model: ${collectionName} not found!`);
@@ -102,7 +106,8 @@ export class QuickDB {
     return model;
   }
 
-  getModels(): QuickModel[] {
+
+  getQuickModels(): QuickModel[] {
     return this.modelList;
   }
 }

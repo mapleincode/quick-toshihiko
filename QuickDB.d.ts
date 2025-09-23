@@ -15,8 +15,9 @@ export declare class QuickDB {
     defineByModelFile(config: ModelFile): null | undefined;
     define(collectionName: string, schema: any[], options?: any): Model;
     addModel(collectionName: string, model: Model): void;
-    get(collectionName: string): QuickModel;
-    getModels(): QuickModel[];
+    get(collectionName: string): Model;
+    getQuickModel(collectionName: string): QuickModel;
+    getQuickModels(): QuickModel[];
 }
 export declare function buildQuickDBMap(dbConfigList: DBConfigBaseProps[], initOptions: InitOptionsProps): QuickDBMap;
 //# sourceMappingURL=QuickDB.d.ts.map

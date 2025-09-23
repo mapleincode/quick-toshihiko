@@ -70,13 +70,16 @@ class QuickDB {
         this.modelMap[quickModel.getName()] = quickModel;
     }
     get(collectionName) {
+        return this.getQuickModel(collectionName).get();
+    }
+    getQuickModel(collectionName) {
         const model = this.modelMap[collectionName];
         if (!model) {
             throw new Error(`db: ${this.getName()} model: ${collectionName} not found!`);
         }
         return model;
     }
-    getModels() {
+    getQuickModels() {
         return this.modelList;
     }
 }

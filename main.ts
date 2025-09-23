@@ -119,7 +119,7 @@ export function initDBs(dbConfigs: DBConfigBaseProps[] | DBConfigBaseProps, mode
   for (const key of Object.keys(databaseMap)) {
     const db = databaseMap[key];
 
-    for (const model of db.getModels()) {
+    for (const model of db.getQuickModels()) {
       const dbName = db.getName();
       const modelName = model.getName();
 
